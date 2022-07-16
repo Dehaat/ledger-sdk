@@ -1,6 +1,5 @@
 package lib.dehaat.ledger.presentation.ledger.transactions.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -37,7 +36,8 @@ fun TransactionsListScreen(
     detailPageNavigationCallback: DetailPageNavigationCallback,
     viewModel: LedgerTransactionViewModel = hiltViewModel(),
     ledgerDetailViewModel: LedgerDetailViewModel,
-    openDaysFilter: () -> Unit
+    openDaysFilter: () -> Unit,
+    openRangeFilter: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val transactions = viewModel.transactionsList.collectAsLazyPagingItems()
@@ -50,12 +50,8 @@ fun TransactionsListScreen(
             onWithPenaltyChange = {
                 viewModel.applyOnlyPenaltyInvoicesFilter(it)
             },
-            onDaysToFilterIconClick = {
-                openDaysFilter()
-            },
-            onDateRangeFilterIconClick = {
-
-            }
+            onDaysToFilterIconClick = openDaysFilter,
+            onDateRangeFilterIconClick = openRangeFilter
         )
         LazyColumn(
             modifier = Modifier,
@@ -81,7 +77,7 @@ fun TransactionsListScreen(
                                 erpId = data.erpId,
                                 locusId = data.locusId,
                             )
-                            else -> null
+                            else -> Unit
                         }
                     }
                     Divider(color = Color.Transparent, thickness = 8.dp)
@@ -122,5 +118,3 @@ fun TransactionsListScreen(
             }
     }
 }
-
-

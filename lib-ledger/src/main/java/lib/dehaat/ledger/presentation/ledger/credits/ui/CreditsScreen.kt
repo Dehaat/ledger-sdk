@@ -13,14 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import lib.dehaat.ledger.initializer.getAmountInRupees
 import lib.dehaat.ledger.initializer.getAmountInRupeesWithoutDecimal
 import lib.dehaat.ledger.initializer.themes.LedgerColors
 import lib.dehaat.ledger.presentation.LedgerDetailViewModel
-import lib.dehaat.ledger.presentation.common.uicomponent.AvailableCreditLimitView
 import lib.dehaat.ledger.presentation.ledger.credits.LedgerCreditViewModel
 import lib.dehaat.ledger.presentation.ledger.credits.ui.component.AvailableCreditLimitInfoForLmsAndNonLmsUseModal
 import lib.dehaat.ledger.presentation.ledger.credits.ui.component.AvailableCreditLimitInfoModal
+import lib.dehaat.ledger.presentation.ledger.credits.ui.component.AvailableCreditLimitView
 import lib.dehaat.ledger.presentation.ledger.credits.ui.component.CreditLineCard
 import lib.dehaat.ledger.presentation.model.creditlines.CreditLineViewData
 
@@ -35,14 +34,15 @@ fun CreditsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val totalAvailableCreditLimit by ledgerDetailViewModel.totalAvailableCreditLimit.collectAsState()
     Column {
-        AvailableCreditLimitView(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            limitInRupees = totalAvailableCreditLimit.getAmountInRupeesWithoutDecimal(),
-            ledgerColors = ledgerColors,
-            onInfoIconClick = {
-                viewModel.showAvailableCreditLimitInfoModal()
-            }
-        )
+        if (isLmsActivated() && totalAvailableCreditLimit.isNotEmpty()) {
+            AvailableCreditLimitView(
+                limitInRupees = totalAvailableCreditLimit.getAmountInRupeesWithoutDecimal(),
+                ledgerColors = ledgerColors,
+                onInfoIconClick = {
+                    viewModel.showAvailableCreditLimitInfoModal()
+                }
+            )
+        }
 
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
@@ -50,13 +50,15 @@ fun CreditsScreen(
         ) {
             items(uiState.creditLinesViewData) { item ->
                 CreditLineCard(
-                    ledgerColors = ledgerColors, data = item,
+                    ledgerColors = ledgerColors,
+                    data = item,
                     onOutstandingInfoIconClick = {
                         openLenderOutstandingBottomSheet(it)
                     },
                     onSanctionedInfoClick = {
                         viewModel.showAvailableCreditLimitInfoForLmsAndNonLmsUseModal()
                     },
+                    isLmsActivated = isLmsActivated
                 )
                 Divider(color = Color.Transparent, thickness = 12.dp)
             }
@@ -77,5 +79,4 @@ fun CreditsScreen(
                 })
         }
     }
-
 }

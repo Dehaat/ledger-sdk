@@ -4,6 +4,7 @@ import lib.dehaat.ledger.presentation.model.creditsummary.CreditSummaryViewData
 import lib.dehaat.ledger.presentation.model.outstanding.LedgerOutStandingDetailViewData
 import lib.dehaat.ledger.presentation.model.outstanding.OverAllOutStandingDetailViewData
 import lib.dehaat.ledger.presentation.model.transactions.DaysToFilter
+import lib.dehaat.ledger.presentation.model.transactionsummary.TransactionSummaryViewData
 
 data class LedgerDetailViewModelState(
     val creditSummaryViewData: CreditSummaryViewData? = null,
@@ -29,12 +30,16 @@ data class LedgerDetailViewModelState(
     val bottomSheetType: BottomSheetType = BottomSheetType.OverAllOutStanding(
         data = overAllOutStandingDetailViewData
     ),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val transactionSummaryViewData: TransactionSummaryViewData? = null,
+    val showFilterRangeDialog: Boolean = false
 ) {
     fun toUiState() = LedgerDetailUIState(
         creditSummaryViewData = creditSummaryViewData,
         isLoading = isLoading,
-        bottomSheetType = bottomSheetType
+        bottomSheetType = bottomSheetType,
+        transactionSummaryViewData = transactionSummaryViewData,
+        isFilteringWithRange = showFilterRangeDialog
     )
 }
 
@@ -42,6 +47,8 @@ data class LedgerDetailUIState(
     val creditSummaryViewData: CreditSummaryViewData?,
     val isLoading: Boolean,
     val bottomSheetType: BottomSheetType,
+    val transactionSummaryViewData: TransactionSummaryViewData?,
+    val isFilteringWithRange: Boolean
 )
 
 sealed class BottomSheetType {
